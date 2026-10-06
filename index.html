@@ -73,7 +73,7 @@
       <div id="start-overlay" class="absolute inset-0 bg-stone-900/60 backdrop-blur-[2px] flex flex-col items-center justify-center text-center p-4 transition-opacity">
         <div class="animate-bounce text-4xl mb-2">🦖</div>
         <p class="retro-font text-xs sm:text-sm text-stone-200 mb-1">화면을 탭하여 시작</p>
-        <p class="text-xs text-stone-400 font-medium">점프: 화면 탭 또는 JUMP 버튼 / 숙이기: 아래로 스와이프</p>
+        <p class="text-xs text-stone-400 font-medium">점프: 화면 탭 또는 JUMP 버튼 (2단 점프) / 숙이기: 아래로 스와이프</p>
       </div>
 
       <!-- 게임 오버 오버레이 -->
@@ -116,7 +116,7 @@
         <span id="speed-indicator">속도: 1.0x</span>
       </div>
       <div class="text-stone-400">
-        스와이프 조작 지원 (위: 점프 / 아래: 숙이기)
+        연속 두 번 탭해 2단 점프 / 아래 스와이프: 숙이기
       </div>
     </div>
   </footer>
@@ -262,6 +262,8 @@
         this.vy = 0;
         this.gravity = 0.65;
         this.jumpForce = -13.5;
+        this.maxJumps = 2;
+        this.jumpsUsed = 0;
         this.isGrounded = true;
         this.isDucking = false;
         this.animTimer = 0;
@@ -269,10 +271,11 @@
       }
 
       jump() {
-        if (this.isGrounded) {
+        if (this.jumpsUsed < this.maxJumps) {
           this.vy = this.jumpForce;
           this.isGrounded = false;
           this.isDucking = false;
+          this.jumpsUsed += 1;
           sound.playJump();
           return true;
         }
@@ -308,6 +311,7 @@
             this.y = GROUND_Y - this.height;
             this.vy = 0;
             this.isGrounded = true;
+            this.jumpsUsed = 0;
           }
         } else {
           this.y = GROUND_Y - this.height;
